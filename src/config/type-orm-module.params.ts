@@ -11,7 +11,7 @@ export const TYPEORM_MODULE_PARAMS = TypeOrmModule.forRootAsync({
         username: configService.getOrThrow<string>(`DB_USER`),
         password: configService.getOrThrow<string>(`DB_PASSWORD`),
         database: configService.getOrThrow<string>(`DB_NAME`),
-        migrations: ['src/migrations/*.ts'],
+        migrations: ['src/migrations/*{.ts,.js}'],
         logging: false,
         entities: [],
     }),

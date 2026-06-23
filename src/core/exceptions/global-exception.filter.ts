@@ -1,17 +1,12 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common'
 import { Response, Request } from 'express'
-import { ExceptionParserService } from '../services/exception-parser.service'
-import { ResponseHelper } from 'src/shared/lib/response.helper'
-import { NO_STACK_TRACE_AVAILABLE } from '../const/messages'
+import { NO_STACK_TRACE_AVAILABLE } from '@core/const/messages'
+import { ExceptionToMessagesMapper } from './exception-to-messages.mapper'
+import { ApiExceptionResponse } from '@core/types/api-response'
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
     private readonly logger = new Logger(GlobalExceptionFilter.name)
-
-    constructor(
-        private readonly exceptionParserService: ExceptionParserService,
-        private readonly responseHelper: ResponseHelper
-    ) {}
 
     catch(exception: unknown, host: ArgumentsHost) {
         const ctx = host.switchToHttp()
@@ -19,20 +14,19 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         const request = ctx.getRequest<Request>()
 
         const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR
-
-        const message = this.exceptionParserService.parse(exception)
-
-        const bodyResponse = this.responseHelper.error(message, status)
+        const message = ExceptionToMessagesMapper.parse(exception)
 
         this.logger.error(
             `[${request.method}] ${request.path} - ${status}: ${message.join(', ')}`,
-            exception instanceof Error ? exception.stack : NO_STACK_TRACE_AVAILABLE
+            exception instanceof Error ? exception.stack : NO_STACK_TRACE_AVAILABLE,
         )
 
-        response.status(status).json({
-            ...bodyResponse,
-            path: request.url,
-            method: request.method,
-        })
+        const errorResponse: ApiExceptionResponse = {
+            statusCode: status,
+            timestamp: new Date().toISOString(),
+            error: message,
+        }
+
+        response.status(status).json(errorResponse)
     }
 }

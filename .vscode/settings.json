@@ -1,0 +1,38 @@
+{
+    // Использовать версию TypeScript из рабочей области
+    "js/ts.tsdk.path": "node_modules\\typescript\\lib",
+
+    // Форматировщик
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "eslint.useFlatConfig": true,
+
+    //
+    "editor.inlineSuggest.enabled": true,
+    "editor.inlineSuggest.suppressSuggestions": true,
+    "editor.inlineSuggest.showToolbar": "onHover",
+
+    // Цвета интерфейса VS Code
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#3a3247",
+        "activityBar.background": "#2f283b",
+        "activityBar.foreground": "#ddd6ef",
+        "activityBar.inactiveForeground": "#ddd6ef99",
+        "activityBarBadge.background": "#5b4f78",
+        "activityBarBadge.foreground": "#f7f4ff",
+        "commandCenter.border": "#ddd6ef66",
+        "sash.hoverBorder": "#5b4f78",
+        "statusBar.background": "#201b29",
+        "statusBar.foreground": "#ddd6ef",
+        "statusBarItem.hoverBackground": "#3a3247",
+        "statusBarItem.remoteBackground": "#201b29",
+        "statusBarItem.remoteForeground": "#ddd6ef",
+        "titleBar.activeBackground": "#201b29",
+        "titleBar.activeForeground": "#ddd6ef",
+        "titleBar.inactiveBackground": "#201b2999",
+        "titleBar.inactiveForeground": "#ddd6ef99"
+    }
+}

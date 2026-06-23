@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-import { NodeEnv } from 'src/shared/enums/node-env.enum'
+import { NodeEnv } from '@shared/enums/node-env.enum'
 
 export function setupSwagger(app: INestApplication<any>, configService: ConfigService<unknown, boolean>) {
     const NODE_ENV = configService.getOrThrow<NodeEnv>('NODE_ENV')

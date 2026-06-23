@@ -20,8 +20,15 @@
         "sourceMap": true,
 
         // === Пути ===
+        "rootDir": ".",
         "outDir": "./dist",
-        "baseUrl": "./",
+        "paths": {
+            "@app/*": ["./src/app/*"],
+            "@config/*": ["./src/config/*"],
+            "@core/*": ["./src/core/*"],
+            "@modules/*": ["./src/modules/*"],
+            "@shared/*": ["./src/shared/*"]
+        },
 
         // === Таргет (Node 20+) ===
         "target": "ES2024",
@@ -35,6 +42,9 @@
 
         // === Оптимизация ===
         "incremental": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+
+        // === Импорты типов ===
+        "types": ["node", "jest"]
     }
 }

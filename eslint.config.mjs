@@ -1,53 +1,80 @@
 // @ts-check
-import eslint from '@eslint/js'
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
-import globals from 'globals'
-import tseslint from 'typescript-eslint'
 
-export default tseslint.config(
+import globals from 'globals'
+import { defineConfig } from 'eslint/config'
+import js from '@eslint/js'
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import tseslint from 'typescript-eslint'
+import jestPlugin from 'eslint-plugin-jest'
+
+export default defineConfig([
+    // Глобальное игнорирование
     {
-        ignores: ['eslint.config.mjs'],
+        ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', 'eslint.config.mjs'],
     },
-    eslint.configs.recommended,
-    ...tseslint.configs.recommendedTypeChecked,
-    eslintPluginPrettierRecommended,
+
+    // Настройки JS
     {
+        files: ['**/*.js'],
+
+        extends: [js.configs.recommended, tseslint.configs.disableTypeChecked],
+
         languageOptions: {
+            sourceType: 'commonjs',
             globals: {
                 ...globals.node,
-                ...globals.jest,
             },
-            sourceType: 'commonjs',
+        },
+    },
+
+    // Настройки TS
+    {
+        files: ['**/*.ts'],
+
+        extends: [js.configs.recommended, ...tseslint.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
+
+        languageOptions: {
+            parser: tseslint.parser,
             parserOptions: {
                 projectService: true,
                 tsconfigRootDir: import.meta.dirname,
             },
+            globals: {
+                ...globals.node,
+            },
         },
-    },
-    {
+
         rules: {
-            'prettier/prettier': [
-                'error',
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/no-unused-vars': [
+                'warn',
                 {
-                    semi: false,
-                    trailingComma: 'es5',
-                    singleQuote: true,
-                    useTabs: false,
-                    tabWidth: 4,
-                    printWidth: 120,
-                    arrowParens: 'always',
-                    bracketSpacing: true,
-                    endOfLine: 'auto',
-                    insertPragma: false,
-                    requirePragma: false,
-                    quoteProps: 'as-needed',
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_',
                 },
             ],
-            '@typescript-eslint/no-explicit-any': 'off',
+
             '@typescript-eslint/no-floating-promises': 'warn',
             '@typescript-eslint/no-unsafe-argument': 'warn',
-            '@typescript-eslint/no-unused-vars': 'warn',
             '@typescript-eslint/no-unsafe-assignment': 'warn',
+            '@typescript-eslint/no-unsafe-member-access': 'warn',
         },
-    }
-)
+    },
+
+    // Jest тесты
+    {
+        files: ['**/*.{test,spec}.{ts,js}', 'test/**/*.{ts,js}'],
+
+        ...jestPlugin.configs['flat/recommended'],
+
+        languageOptions: {
+            globals: {
+                ...globals.jest,
+            },
+        },
+    },
+
+    // Prettier всегда последним
+    eslintPluginPrettierRecommended,
+])

@@ -1,18 +1,22 @@
 import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app.module'
 import { ConfigService } from '@nestjs/config'
-import { setupHelmet } from './config/helmet.config'
-import { setupCors } from './config/cors.config'
-import { setupPayload } from './config/payload.config'
-import { setupGlobalPipes } from './config/global-pipes.config'
-import { setupGlobalExceptionFilter } from './config/global-exception-filter.config'
-import { setupSwagger } from './config/swagger.config'
+import { AppModule } from '@app/app.module'
+import { setupHelmet } from '@config/helmet.config'
+import { setupCors } from '@config/cors.config'
+import { setupPayload } from '@config/payload.config'
+import { setupGlobalPipes } from '@config/global-pipes.config'
+import { setupGlobalExceptionFilter } from '@config/global-exception-filter.config'
+import { setupSwagger } from '@config/swagger.config'
+import { ResponseInterceptor } from '@core/interceptors/response.interceptor'
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create(AppModule)
     const configService = app.get(ConfigService)
+    const port = configService.getOrThrow<number>('PORT')
 
     app.setGlobalPrefix('api')
+
+    app.useGlobalInterceptors(new ResponseInterceptor())
 
     // Helmet — дополнительная безопасность HTTP-заголовков
     setupHelmet(app)
@@ -32,7 +36,6 @@ async function bootstrap(): Promise<void> {
     // Swagger документация
     setupSwagger(app, configService)
 
-    const port = configService.getOrThrow<number>('PORT')
     await app.listen(port)
 }
 
