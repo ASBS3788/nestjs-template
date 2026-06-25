@@ -5,11 +5,11 @@ import { DataSource } from 'typeorm'
 
 export const AppDataSource = new DataSource({
     type: 'mysql',
+    host: String(process.env.DB_HOST),
     port: Number(process.env.DATABASE_PORT),
-    host: String(process.env.DATABASE_HOST),
-    database: String(process.env.DATABASE_NAME),
-    username: String(process.env.DATABASE_USER),
-    password: String(process.env.DATABASE_PASSWORD),
+    username: String(process.env.DB_USER),
+    password: String(process.env.DB_PASSWORD),
+    database: String(process.env.DB_NAME),
     entities: ['src/**/*.entity{.ts,.js}'],
     migrations: ['src/migrations/*{.ts,.js}'],
     logging: true,
